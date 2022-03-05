@@ -1,14 +1,26 @@
 import "./global.css";
 import React from "react";
-import getConfig from "./config";
+// import getConfig from "./config";
 import styled from "styled-components";
 
-const { networkId } = getConfig(process.env.NODE_ENV || "development");
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Header from "./components/Header";
+import NewPoll from "./components/NewPoll";
+import PollingStation from "./components/PollingStation";
+import Home from "./components/Home";
+// const { networkId } = getConfig(process.env.NODE_ENV || "development");
 
 export default function App() {
-  <Container>Hello</Container>;
+  return (
+    <>
+      <BrowserRouter>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route exact path="/newpoll" element={<NewPoll />} />
+          <Route exact path="/pollingstation" element={<PollingStation />} />
+        </Routes>
+      </BrowserRouter>
+    </>
+  );
 }
-
-const Container = styled.div`
-  color: white;
-`;
