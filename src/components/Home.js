@@ -2,7 +2,16 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
-const Home = () => {
+const Home = ({ changeCandidates }) => {
+  const [promptList, changePromptList] = useState([]);
+
+  useEffect(() => {
+    const getPrompts = async () => {
+      changePromptList(await window.contract.getAllPrompts());
+      console.log(await window.contract.getAllPrompts());
+    };
+    getPrompts();
+  }, []);
   const navigate = useNavigate();
   const prompt = ["Vote", "Status"];
   const handleClick = (el) => {
@@ -13,6 +22,9 @@ const Home = () => {
       navigate("/");
     }
   };
+  useEffect(() => {
+    changeCandidates();
+  }, [changeCandidates]);
   return (
     <Container>
       <StyledTable>
@@ -24,7 +36,7 @@ const Home = () => {
           </tr>
         </thead>
         <tbody>
-          {prompt.map((el, index) => {
+          {promptList.map((el, index) => {
             return (
               <tr key={index}>
                 <td>{index + 1}</td>
@@ -33,6 +45,7 @@ const Home = () => {
                   <Button
                     onClick={() => {
                       handleClick(el);
+                      changeCandidates(el);
                     }}
                   >
                     Click here

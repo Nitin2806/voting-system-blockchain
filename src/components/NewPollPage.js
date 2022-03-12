@@ -2,60 +2,71 @@ import React, { useState, useRef } from "react";
 import styled from "styled-components";
 
 const NewPoll = () => {
-  const candidateName1 = useRef();
-  const candidateName2 = useRef();
-  const candidateName1URL = useRef();
-  const candidateName2URL = useRef();
+  const candidate1Name = useRef();
+  const candidate1Url = useRef();
+  const candidate2Name = useRef();
+  const candidate2Url = useRef();
 
-  const promptRef = useRef();
+  var obj = {};
+  const [Ename, setName] = useState("");
+  const [url, seturl] = useState("");
 
-  const formRef = useRef();
+  function addItemToArray(obj) {
+    var existingEntries = JSON.parse(localStorage.getItem("Election"));
+    if (existingEntries == null) existingEntries = [];
+    existingEntries.push(obj);
+    localStorage.clear("Election");
+    localStorage.setItem("Election", JSON.stringify(existingEntries));
+  }
 
-  const [loading, setLoading] = useState(false);
+  const onSubmit = (Ename, url) => {
+    obj["Name"] = Ename;
+    obj["image_url"] = url;
+    addItemToArray(obj);
+  };
 
-  const [disableButton, changeDisable] = useState(false);
-
-  const sendToBlockChain = async (e) => {
+  const sendToBlockChain = async () => {
     changeDisable(true);
-    e.preventDefault();
-    console.log(candidateName1);
     await window.contract.addUrl({
-      name: candidateName1.current.value,
-      url: candidateName1URL.current.value,
+      name: candidate1Name.current.value,
+      url: candidate1Url.current.value,
     });
 
     await window.contract.addUrl({
-      name: candidateName2.current.value,
-      url: candidateName2URL.current.value,
+      name: candidate2Name.current.value,
+      url: candidate2Url.current.value,
     });
 
     await window.contract.addCandidatePair({
       prompt: promptRef.current.value,
-      name1: candidateName1.current.value,
-      name2: candidateName2.current.value,
+      name1: candidate1Name.current.value,
+      name2: candidate2Name.current.value,
     });
 
     await window.contract.addToPromptArray({ prompt: promptRef.current.value });
 
-    if (formRef.current) formRef.current.reset();
-
-    changeDisable(false);
-    alert("head back to home page");
+    alert("Back to Home Page");
   };
 
   return (
     <Container>
       <Election>
-        <Form onSubmit={sendToBlockChain} ref={formRef}>
+        <Form
+          onSubmit={(e) => {
+            e.preventDefault();
+            onSubmit(Ename, url);
+          }}
+        >
           <Labeldiv>
-            <Label htmlfor="name">Name of the Party</Label>
+            <Label htmlfor="name">Name of the Party 1 </Label>
           </Labeldiv>
           <Inputdiv>
             <Input
               type="text"
-              ref={candidateName1}
+              ref={candidate1Name}
               placeholder="Party Name"
               name="partyname"
+              onChange={(e) => setName(e.target.value)}
             />
           </Inputdiv>
           <Labeldiv>
@@ -64,47 +75,36 @@ const NewPoll = () => {
           <Inputdiv>
             <Input
               type="url"
-              ref={candidateName1URL}
+              ref={candidate1Url}
               placeholder="URL"
               name="partyurl"
+              onChange={(e) => seturl(e.target.value)}
             />
           </Inputdiv>
-          <Labeldiv>
-            <Label htmlfor="name">Name of the Party</Label>
+
+          {/* <Labeldiv>
+            <Label htmlfor="name">Name of the Party 2 </Label>
           </Labeldiv>
           <Inputdiv>
             <Input
               type="text"
-              ref={candidateName2}
+              ref={candidate2Name}
               placeholder="Party Name"
               name="partyname"
             />
-          </Inputdiv>{" "}
-          <Labeldiv>
+          </Inputdiv> */}
+          {/* <Labeldiv>
             <Label htmlfor="url">Image URL</Label>
           </Labeldiv>
           <Inputdiv>
             <Input
               type="url"
-              ref={candidateName2URL}
+              ref={candidate2Url}
               placeholder="URL"
               name="partyurl"
             />
-          </Inputdiv>
-          <Labeldiv>
-            <Label htmlfor="url">Prompt</Label>
-          </Labeldiv>
-          <Inputdiv>
-            <Input
-              type="text"
-              ref={promptRef}
-              placeholder="Election Name"
-              name="election"
-            />
-          </Inputdiv>
-          <Submit type="submit" disabled={disableButton}>
-            {disableButton ? "Submitting" : "Add"}
-          </Submit>
+          </Inputdiv> */}
+          <Submit>Add Party</Submit>
         </Form>
       </Election>
     </Container>
@@ -115,10 +115,8 @@ export default NewPoll;
 
 const Container = styled.div`
   color: white;
+
   margin-top: 95px;
-  @media (max-width: 724px) {
-    margin-top: 0;
-  }
 `;
 
 const Election = styled.div`
@@ -128,14 +126,10 @@ const Election = styled.div`
   border: 1px solid silver;
   transform: translate(0, 50%);
   border-radius: 10px;
-  @media (max-width: 724px) {
-  }
 `;
 const Form = styled.form`
   padding: 10px;
   display: inline-block;
-  @media (max-width: 724px) {
-  }
 `;
 const Labeldiv = styled.div`
   float: left;
@@ -150,9 +144,6 @@ const Labeldiv = styled.div`
 const Label = styled.label`
   font-size: 20px;
   display: inline-block;
-  @media (max-width: 724px) {
-    font-size: 15px;
-  }
 `;
 const Inputdiv = styled.div`
   float: left;
@@ -171,17 +162,14 @@ const Input = styled.input`
   flex-direction: row;
   border-radius: 10px;
   margin-bottom: 10px;
-  @media (max-width: 724px) {
-  }
 `;
 
 const Submit = styled.button`
   padding: 10px;
   border-radius: 10px;
+
   border: none;
   cursor: pointer;
   width: 180px;
   background-color: blueviolet;
-  @media (max-width: 724px) {
-  }
 `;
