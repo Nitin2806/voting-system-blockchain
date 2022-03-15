@@ -47,14 +47,8 @@ const PollingStation = () => {
 
     getInfo();
   }, []);
-  let count = 0;
 
   const addVote = async (index) => {
-    if (count === 1) {
-      alert("You can only vote for once");
-      changeResultsDisplay(true);
-    }
-    count = 1;
     changeButtonStatus(true);
     await window.contract.addVote({
       prompt: localStorage.getItem("prompt"),
@@ -87,37 +81,37 @@ const PollingStation = () => {
       </Header>
       <Body>
         <Containerone>
-          <Hovermessage>
-            <Card onClick={() => addVote(0)} key={candidate1Votes}>
-              <Image src={candidate1URL} />
-            </Card>
-            <Message>Click to vote</Message>
-          </Hovermessage>
+          {buttonStatus ? (
+            <VotedMessage>You have Already voted</VotedMessage>
+          ) : (
+            <Message>Click to Vote</Message>
+          )}
 
-          {showresults ? <Votes>{candidate1Votes}</Votes> : null}
-          {/* <ButtonContainer>
+          <Card key={candidate1Votes}>
             <Button disabled={buttonStatus} onClick={() => addVote(0)}>
-              Vote
+              <Image src={candidate1URL} />
             </Button>
-          </ButtonContainer> */}
+          </Card>
+          {showresults ? <Votes>{candidate1Votes}</Votes> : null}
         </Containerone>
+
         <ContainerTwo>
-          <Hovermessage>
-            <Card onClick={() => addVote(1)} key={candidate2URL}>
+          {buttonStatus ? (
+            <VotedMessage>You have Already voted</VotedMessage>
+          ) : (
+            <Message>Click to Vote</Message>
+          )}
+
+          <Card key={candidate2URL}>
+            <Button disabled={buttonStatus} onClick={() => addVote(1)}>
               <Image src={candidate2URL} />
-            </Card>
-            <Message>Click to vote</Message>
-          </Hovermessage>
+            </Button>
+          </Card>
 
           {showresults ? <Votes>{candidate2Votes}</Votes> : null}
-
-          {/* <ButtonContainer>
-            <Button disabled={buttonStatus} onClick={() => addVote(1)}>
-              Vote
-            </Button>
-          </ButtonContainer> */}
         </ContainerTwo>
       </Body>
+      {buttonStatus ? <Voted>Thank you for Voting</Voted> : null}
     </Container>
   );
 };
@@ -134,7 +128,6 @@ const Container = styled.div`
 
 const Header = styled.div`
   width: 100%;
-  height: 80px;
   text-align: center;
   h2 {
     font-size: 40px;
@@ -145,6 +138,7 @@ const Header = styled.div`
     }
   }
 `;
+
 const Body = styled.div`
   width: 100%;
   padding: 10px;
@@ -152,27 +146,58 @@ const Body = styled.div`
   flex-direction: row;
   justify-content: space-around;
   user-select: none;
-
   @media (max-width: 724px) {
     flex-direction: column;
   }
 `;
 const Message = styled.div`
   display: none;
+  text-align: center;
+  font-size: 30px;
+  border-radius: 10px;
+  border: 2px solid silver;
+  background-color: red;
+  position: absolute;
+  margin: 180px 0px 0px 120px;
 `;
-const Hovermessage = styled.div`
-  :hover {
-    opacity: 0.6;
+const VotedMessage = styled.div`
+  display: none;
+  text-align: center;
+  font-size: 30px;
+  border-radius: 10px;
+  border: 2px solid silver;
+  background-color: red;
+  position: absolute;
+  margin: 180px 0px 0px 40px;
+`;
+
+const Containerone = styled.div`
+  cursor: pointer;
+
+  &:hover {
+    ${VotedMessage} {
+      display: inline-block;
+    }
     ${Message} {
       display: inline-block;
-      display: flex;
+    }
+  }
+`;
+const ContainerTwo = styled.div`
+  cursor: pointer;
 
-      justify-content: center;
+  &:hover {
+    ${VotedMessage} {
+      display: inline-block;
+    }
+    ${Message} {
+      display: inline-block;
     }
   }
 `;
 
 const Card = styled.div`
+  position: relative;
   width: 380px;
   height: 400px;
   border-radius: 20px;
@@ -184,22 +209,25 @@ const Card = styled.div`
     height: 200px;
     margin: auto;
   }
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
 `;
-const Button = styled.button``;
-// const PartyName = styled.div`
-//   text-align: center;
-//   font-size: 30px;
-//   background-color: firebrick;
-// `;
+
+const Button = styled.button`
+  background-color: transparent;
+  border: none;
+`;
+
 const Image = styled.img`
   width: 100%;
   height: 100%;
   border: none;
+  cursor: pointer;
   border-radius: 20px;
+  position: relative;
+  z-index: -1;
 `;
-const ButtonContainer = styled.div``;
-const Containerone = styled.div``;
-const ContainerTwo = styled.div``;
 
 const Votes = styled.div`
   display: flex;
@@ -210,15 +238,14 @@ const Votes = styled.div`
   border-radius: 7px;
   background-color: gray;
 `;
-{
-  /* <Card>
-          <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Bharatiya_Janata_Party_logo.svg/1200px-Bharatiya_Janata_Party_logo.svg.png" />
-        </Card>
+const Voted = styled.h2`
+  text-align: center;
+`;
 
-        <Card>
-          <Image src="https://upload.wikimedia.org/wikipedia/commons/e/e6/Congresspartylogo%E2%80%A6.png"></Image>
-        </Card>
-        <Card>
-          <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Aam_Aadmi_Party_logo_%28English%29.svg/1200px-Aam_Aadmi_Party_logo_%28English%29.svg.png"></Image>
-        </Card> */
+{
+  /* <ButtonContainer>
+            <Button disabled={buttonStatus} onClick={() => addVote(1)}>
+              Vote
+            </Button>
+          </ButtonContainer> */
 }
