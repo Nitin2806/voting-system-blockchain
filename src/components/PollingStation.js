@@ -227,6 +227,7 @@ const Image = styled.img`
   border-radius: 20px;
   position: relative;
   z-index: -1;
+  background-repeat: no-repeat;
 `;
 
 const Votes = styled.div`

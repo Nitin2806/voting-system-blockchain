@@ -8,31 +8,47 @@ const Home = ({ changeCandidates }) => {
   useEffect(() => {
     const getPrompts = async () => {
       changePromptList(await window.contract.getAllPrompts());
-      console.log(await window.contract.getAllPrompts());
+      // console.log(await window.contract.getAllPrompts());
     };
     getPrompts();
   }, []);
   const navigate = useNavigate();
-  const prompt = ["Vote", "Status"];
+
   const handleClick = (el) => {
-    console.log(el);
     if (el === "Vote") {
       navigate("/pollingstation");
     } else {
       navigate("/");
     }
   };
+
   useEffect(() => {
     changeCandidates();
   }, [changeCandidates]);
+
+  const deletecolumn = async (prompt) => {
+    console.log(prompt);
+    await window.contract.deletePrompt({ prompt });
+  };
+
+  const clearAll = async () => {
+    await window.contract.clearPromptArray();
+  };
   return (
     <Container>
       <StyledTable>
         <thead>
           <tr>
-            <th>#</th>
+            <th>No.</th>
             <th>List of Polls</th>
             <th>Go to Poll</th>
+            <DeleteAll
+              onClick={() => {
+                clearAll();
+              }}
+            >
+              Delete
+            </DeleteAll>
           </tr>
         </thead>
         <tbody>
@@ -49,6 +65,15 @@ const Home = ({ changeCandidates }) => {
                     }}
                   >
                     Click here
+                  </Button>
+                </td>
+                <td>
+                  <Button
+                    onClick={() => {
+                      deletecolumn(el);
+                    }}
+                  >
+                    Delete
                   </Button>
                 </td>
               </tr>
@@ -114,4 +139,15 @@ const Button = styled.button`
   padding: 10px;
   border-radius: 10px;
   cursor: pointer;
+`;
+const DeleteMessage = styled.div`
+  position: relative;
+  display: none;
+`;
+
+const DeleteAll = styled.th`
+  cursor: pointer;
+  :hover {
+    color: red;
+  }
 `;

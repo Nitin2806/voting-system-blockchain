@@ -65,7 +65,7 @@ export function getCandidatePair(prompt: string): string[] {
 
 export function addUrl(name: string, url: string): void {
   CandidateURL.set(name, url);
-  logging.log("added url for " + name);
+  logging.log("URL added for " + name);
 }
 
 export function addCandidatePair(
@@ -89,7 +89,7 @@ export function addToPromptArray(prompt: string): void {
 }
 
 export function clearPromptArray(): void {
-  logging.log("clearing prompt array");
+  logging.log("Clearing prompt array");
   PromptArray.delete("AllArrays");
 }
 
@@ -115,4 +115,9 @@ export function recordUser(prompt: string, user: string): void {
   } else {
     userParticipation.set(prompt, [user]);
   }
+}
+
+export function deletePrompt(deletePrompt: string): void {
+  logging.log("I received the Prompt");
+  PromptArray.get(deletePrompt);
 }
